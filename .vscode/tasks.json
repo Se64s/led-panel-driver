@@ -1,0 +1,104 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Launch REPL",
+            "type": "shell",
+            "command": "screen",
+            "args": [
+                "${config:replPort}",
+                "${config:replBaudrate}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "PYBOARD: Load current file",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "${config:pythonInterpreter}",
+            "args": [
+                "${config:pyboardPath}",
+                "-d",
+                "${config:replPort}",
+                "-b",
+                "${config:replBaudrate}",
+                "-f",
+                "cp",
+                "${relativeFile}",
+                ":${relativeFile}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "PYBOARD: Create folder",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "${config:pythonInterpreter}",
+            "args": [
+                "${config:pyboardPath}",
+                "-d",
+                "${config:replPort}",
+                "-b",
+                "${config:replBaudrate}",
+                "-f",
+                "mkdir",
+                "${input:newFolder}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "PYBOARD: Show files in device",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "${config:pythonInterpreter}",
+            "args": [
+                "${config:pyboardPath}",
+                "-d",
+                "${config:replPort}",
+                "-b",
+                "${config:replBaudrate}",
+                "-f",
+                "ls",
+                "${input:lsPath}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "TOOL: Setup project",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "${workspaceFolder}/tools/project-setup.sh",
+            "args": [
+                "${config:pythonInterpreter}",
+                "${config:pyboardPath}",
+                "${config:replPort}",
+                "${config:replBaudrate}"
+            ],
+            "problemMatcher": []
+        },
+    ],
+    "inputs": [
+        {
+          "type": "promptString",
+          "id": "newFolder",
+          "description": "Create a folder into filesystem.",
+          "default": "test"
+        },
+        {
+            "type": "promptString",
+            "id": "lsPath",
+            "description": "Show files in selected path.",
+            "default": ""
+          },
+      ]
+}
