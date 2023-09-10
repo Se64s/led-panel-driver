@@ -1,0 +1,21 @@
+#!/bin/bash
+# Input parameters
+pyint=python3
+tmp_file_path=$(dirname "$0")/tmp_tool.ppm
+toolpath=$(dirname "$0")/../panel_client.py
+label_gen_path=$(dirname "$0")/generate-label.sh
+serialport=/dev/ttyACM0
+message_list=(
+    'HOLA MUNDO'
+    'MUY BUENOS DIAS'
+    'CARMEN <3'
+)
+# Loop for each image
+for val1 in ${message_list[*]}; do
+    $label_gen_path "$val1" $tmp_file_path
+    $pyint $toolpath -p $serialport image $tmp_file_path
+    sleep 1
+    rm $tmp_file_path
+    $pyint $toolpath -p $serialport clear
+done
+# EOF
