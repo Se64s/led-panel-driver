@@ -6,7 +6,7 @@ toolpath=$(dirname "$0")/../panel_client.py
 label_gen_path=$(dirname "$0")/generate-label.sh
 serialport=/dev/ttyACM0
 # Generate label
-$label_gen_path "$1" $tmp_file_path
+$label_gen_path -t "$1" -o $tmp_file_path
 # Send label to server
 $pyint $toolpath -p $serialport image $tmp_file_path
 rm $tmp_file_path

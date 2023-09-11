@@ -12,7 +12,7 @@ message_list=(
 )
 # Loop for each image
 for val1 in ${message_list[*]}; do
-    $label_gen_path "$val1" $tmp_file_path
+    $label_gen_path -t "$val1" -o $tmp_file_path
     $pyint $toolpath -p $serialport image $tmp_file_path
     sleep 1
     rm $tmp_file_path

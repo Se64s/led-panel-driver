@@ -1,16 +1,77 @@
 #!/bin/bash
+
+# Help function ---------------------------------------------------------------
+
+Help()
+{
+   # Display Help
+   echo "Generate ppm image file with a text label."
+   echo 
+   echo "Syntax: generate-label.sh [w|H|T|t|c|o|h]"
+   echo "options:"
+   echo "w     Image width."
+   echo "H     Image high."
+   echo "T     Text high."
+   echo "t     Text to print."
+   echo "c     Color value in hex: 'RR/GG/BB'."
+   echo "o     Output file name."
+   echo "h     Show help."
+   echo
+}
+
+# Main code -------------------------------------------------------------------
+
 width=72
 high=6
 text_high=5
 tmp_file_path=$(dirname "$0")/tmp_label.ppm
-# str_msg="HOLA MUNDO"
-str_msg="$1"
-# out_img=test_msg.ppm
-out_img=$2
+str_msg="Hello World"
+out_img=label.ppm
 color_background=black
-color_text=rgb:15/00/15
+color_val=10/10/10
+
+# Process args ----------------------------------------------------------------
+
+while getopts 'w:H:T:t:c:o:h' OPTION; do
+    case "$OPTION" in
+        w)
+            width=$OPTARG
+            ;;
+        H)
+            high=$OPTARG
+            ;;
+        T)
+            text_high=$OPTARG
+            ;;
+        t)
+            str_msg="$OPTARG"
+            ;;
+        c)
+            color_val=$OPTARG
+            ;;
+        o)
+            out_img=$OPTARG
+            ;;
+        h)
+            Help
+            exit 0
+            ;;
+        ?)
+            echo "Error: Invalid option"
+            exit 1
+            ;;
+    esac
+done
+
+# Logic -----------------------------------------------------------------------
+
 # Create base image
 ppmmake black $width $high > $tmp_file_path
-ppmlabel -x 2 -y $text_high -size $text_high -background $color_background -color $color_text -text "$str_msg" $tmp_file_path > $out_img
+
+# Add label
+ppmlabel -x 1 -y $text_high -size $text_high -background $color_background -color rgb:$color_val -text "$str_msg" $tmp_file_path > $out_img
+
+# Remove tmp files
 rm $tmp_file_path
+
 # EOF
