@@ -86,6 +86,19 @@
             ],
             "problemMatcher": []
         },
+        {
+            "label": "TEST: Send text label",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/tools"
+            },
+            "command": "${workspaceFolder}/tools/panel-set-label.sh",
+            "args": [
+                "-t",
+                "\"${input:testText}\""
+            ],
+            "problemMatcher": []
+        },
     ],
     "inputs": [
         {
@@ -99,6 +112,12 @@
             "id": "lsPath",
             "description": "Show files in selected path.",
             "default": ""
-          },
+        },
+        {
+            "type": "promptString",
+            "id": "testText",
+            "description": "Text to show in panel.",
+            "default": ""
+        },
       ]
 }
