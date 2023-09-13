@@ -6,9 +6,9 @@ toolpath=$(dirname "$0")/../panel_client.py
 label_gen_path=$(dirname "$0")/generate-label.sh
 serialport=/dev/ttyACM0
 message_list=(
-    'HOLA MUNDO'
+    'Hola_Mundo'
     'MUY BUENOS DIAS'
-    'CARMEN <3'
+    'CARMEN_<3'
 )
 # Loop for each image
 for val1 in ${message_list[*]}; do

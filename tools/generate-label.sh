@@ -7,7 +7,7 @@ Help()
    # Display Help
    echo "Generate ppm image file with a text label."
    echo 
-   echo "Syntax: generate-label.sh [w|H|T|t|c|o|h]"
+   echo "Syntax: $0 [w|H|T|t|c|o|h]"
    echo "options:"
    echo "w     Image width."
    echo "H     Image high."
@@ -28,7 +28,7 @@ tmp_file_path=$(dirname "$0")/tmp_label.ppm
 str_msg="Hello World"
 out_img=label.ppm
 color_background=black
-color_val=10/10/10
+color_val=05/05/05
 
 # Process args ----------------------------------------------------------------
 
