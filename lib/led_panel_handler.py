@@ -11,7 +11,7 @@ PIXEL_SIZE = 3
 
 class LedPanel:
 
-    def __init__(self, n_row=6, n_col=72, pixel_gpio=0) -> None:
+    def __init__(self, n_row=12, n_col=72, pixel_gpio=0) -> None:
         self.__n_row = n_row
         self.__n_col = n_col
         self.__np = NeoPixel(Pin(pixel_gpio, Pin.OUT), self.__n_row * self.__n_col)

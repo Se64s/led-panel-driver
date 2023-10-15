@@ -22,13 +22,13 @@ Help()
 # Main code -------------------------------------------------------------------
 
 width=72
-high=6
-text_high=5
+high=12
+text_high=6
 tmp_file_path=$(dirname "$0")/tmp_label.ppm
 str_msg="Hello World"
 out_img=label.ppm
 color_background=black
-color_val=05/05/05
+color_val=01/01/01
 
 # Process args ----------------------------------------------------------------
 
