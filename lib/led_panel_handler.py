@@ -8,10 +8,11 @@ from machine import Pin
 from neopixel import NeoPixel
 
 PIXEL_SIZE = 3
+PIXEL_DEFAULT_GPIO = 15
 
 class LedPanel:
 
-    def __init__(self, n_row=12, n_col=72, pixel_gpio=0) -> None:
+    def __init__(self, n_row=12, n_col=72, pixel_gpio=PIXEL_DEFAULT_GPIO) -> None:
         self.__n_row = n_row
         self.__n_col = n_col
         self.__np = NeoPixel(Pin(pixel_gpio, Pin.OUT), self.__n_row * self.__n_col)

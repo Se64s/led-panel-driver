@@ -3,12 +3,53 @@
 # Brief: Application entry point
 #
 
-import uselect
 import sys
 import micropython
 import led_panel_handler
 import link_layer
 import cmd_layer
+
+# -----------------------------------------------------------------------------
+
+class DeviceHandler:
+
+    def __init__(self) -> None:
+        self.__link_handler = link_layer.LinkHandler(frame_callback=self.__link_callback, send_func=self.__link_write)
+        self.__cmd_handler = cmd_layer.CommandHandler(cmd_callback=self.__cmd_callback, send_func=self.__cmd_write)
+        self.__led_panel = led_panel_handler.LedPanel()
+
+    def __link_callback(self, link_frame:bytearray):
+        self.__cmd_handler.process_frame(link_frame)
+
+    def __link_write(self, data_link:bytearray):
+        sys.stdout.buffer.write(data_link)
+
+    def __cmd_callback(self, cmd_payload:cmd_layer.CommandPayload):
+        if cmd_payload.get_cmd() == cmd_layer.CMD_ID_ACK:
+            pass
+        elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_CLEAR:
+            self.__led_panel.clear()
+            self.__cmd_handler.send_ack()
+        elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_SET:
+            (r,g,b) = cmd_payload.get_payload()
+            self.__led_panel.fill(r,g,b)
+            self.__cmd_handler.send_ack()
+        elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_IMG:
+            (n_row, n_col, pixel_data) = cmd_payload.get_payload()
+            self.__led_panel.set_image(n_row, n_col, pixel_data)
+            self.__cmd_handler.send_ack()
+        elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_EXIT:
+            self.__cmd_handler.send_ack()
+            enable_repl_scape(True)
+        else:
+            pass
+
+    def __cmd_write(self, data_cmd:bytearray):
+        self.__link_handler.send_frame(data_cmd)
+
+    def process_byte(self, data_byte:int):
+        self.__link_handler.get_byte(data_byte)
+
 
 # -----------------------------------------------------------------------------
 
@@ -19,53 +60,15 @@ def enable_repl_scape(status:bool):
         micropython.kbd_intr(-1)
 
 def read_byte():
-    return(sys.stdin.buffer.read(1) if spoll.poll(0) else None)
-
-def link_write(data_link:bytearray):
-    sys.stdout.buffer.write(data_link)
-
-def cmd_write(data_cmd:bytearray):
-    global lh
-    lh.send_frame(data_cmd)
-
-def link_cb(link_frame:bytearray):
-    global ch
-    ch.process_frame(link_frame)
-
-def cmd_cb(cmd_payload:cmd_layer.CommandPayload):
-    global ch
-    global lp
-    if cmd_payload.get_cmd() == cmd_layer.CMD_ID_ACK:
-        pass
-    elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_CLEAR:
-        lp.clear()
-        ch.send_ack()
-    elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_SET:
-        (r,g,b) = cmd_payload.get_payload()
-        lp.fill(r,g,b)
-        ch.send_ack()
-    elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_IMG:
-        (n_row, n_col, pixel_data) = cmd_payload.get_payload()
-        lp.set_image(n_row, n_col, pixel_data)
-        ch.send_ack()
-    elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_EXIT:
-        ch.send_ack()
-        enable_repl_scape(True)
-    else:
-        pass
+    return sys.stdin.buffer.read(1)
 
 # -----------------------------------------------------------------------------
 
-spoll = uselect.poll()
-lh = link_layer.LinkHandler(frame_callback=link_cb, send_func=link_write)
-ch = cmd_layer.CommandHandler(cmd_callback=cmd_cb, send_func=cmd_write)
-lp = led_panel_handler.LedPanel()
+device = DeviceHandler()
 
 # -----------------------------------------------------------------------------
 
 def main(arguments):
-    # Setup serial polling
-    spoll.register(sys.stdin, uselect.POLLIN)
 
     # Disable scape character on REPL
     enable_repl_scape(False)
@@ -74,7 +77,7 @@ def main(arguments):
     while True:
         c = read_byte()
         if c != None:
-            lh.get_bytes(c)
+            device.process_byte(c)
 
 
 if __name__ == '__main__':
