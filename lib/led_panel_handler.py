@@ -28,7 +28,6 @@ class LedPanel:
     def set_image(self, n_row:int, n_col:int, pixel_data:bytearray):
         len_data = len(pixel_data)
         expected_len = n_row * n_col * PIXEL_SIZE
-        print(f"Len data: {len_data}")
         if len_data != expected_len:
             raise TypeError(f"size of pixel_data {len_data} doesnt match with expected value {expected_len}")
 
