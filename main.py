@@ -3,13 +3,11 @@
 # Brief: Application entry point
 #
 
-import sys
 import micropython
 import led_panel_handler
 import link_layer
 import cmd_layer
 import machine
-import time
 
 # -----------------------------------------------------------------------------
 
@@ -50,7 +48,6 @@ class DeviceHandler:
             self.__cmd_handler.send_ack()
         elif cmd_payload.get_cmd() == cmd_layer.CMD_ID_EXIT:
             self.__cmd_handler.send_ack()
-            enable_repl_scape(True)
         else:
             pass
 
@@ -61,15 +58,6 @@ class DeviceHandler:
         while self.__uart.any() > 0:
             self.__link_handler.get_bytes(self.__uart.read(self.__uart.any()))
             
-
-# -----------------------------------------------------------------------------
-
-def enable_repl_scape(status:bool):
-    if status:
-        micropython.kbd_intr(3)
-    else:
-        micropython.kbd_intr(-1)
-
 # -----------------------------------------------------------------------------
 
 device = DeviceHandler()
@@ -82,6 +70,7 @@ def main(arguments):
     while True:
         device.check_port()
 
+# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
     main(None)
